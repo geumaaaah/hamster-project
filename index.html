@@ -112,6 +112,8 @@
       .number { position: absolute; z-index: 1; top: 65%; color: var(--coral); font-size: clamp(96px, 15vw, 156px); font-weight: 700; line-height: 1; letter-spacing: -0.08em; text-shadow: 0 2px 0 rgba(255, 255, 255, 0.3); transform: translateY(-50%); }
       :root[data-theme='dark'] .number { color: var(--gold); text-shadow: 0 2px 0 rgba(0, 0, 0, 0.45), 0 0 16px rgba(243, 200, 92, 0.3); }
       .number-label { position: absolute; z-index: 2; top: 81%; color: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: 0.12em; transform: translateY(-50%); }
+      .hamster-message { position: absolute; z-index: 3; top: 2%; left: 50%; width: min(82%, 280px); margin: 0; padding: 10px 14px; border: 1px solid var(--line); border-radius: 16px; color: var(--ink); background: var(--card); box-shadow: 0 8px 18px var(--card-depth); font-size: 13px; font-weight: 700; line-height: 1.45; text-align: center; transform: translateX(-50%); }
+      .hamster-message::after { content: ''; position: absolute; bottom: -7px; left: 50%; width: 12px; height: 12px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--card); transform: translateX(-50%) rotate(45deg); }
 
       .actions { display: flex; align-items: center; gap: 16px; margin-top: 34px; }
       button { border: 0; border-radius: 999px; padding: 14px 21px; color: #fffdf8; background: var(--ink); font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; transition: transform 180ms ease, background 180ms ease; }
@@ -152,7 +154,7 @@
           <p class="intro">햄스터가 오늘의 행운 숫자를 들고 왔어요. 작은 행운은 생각보다 가까이 있습니다.</p>
           <div class="actions">
             <button id="draw-button" type="button">다시 뽑기 <span aria-hidden="true">↗</span></button>
-            <span class="hint">오늘 하루를 위한 숫자</span>
+            <span class="hint">5분마다 한 번 뽑을 수 있어요</span>
           </div>
         </div>
 
@@ -162,6 +164,7 @@
             <img class="hamster hamster-dark" src="assets/hamster-dark.png" alt="행운 숫자 팻말을 든 무서운 햄스터" />
             <span class="number" id="lucky-number">7</span>
             <span class="number-label">YOUR LUCKY NUMBER</span>
+            <p class="hamster-message" id="hamster-message" role="status" hidden></p>
           </div>
         </div>
       </section>
@@ -194,17 +197,55 @@
       document.querySelector('#today').textContent = dateFormatter.format(today);
 
       const dayKey = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
-      let seed = [...dayKey].reduce((total, character) => total + character.charCodeAt(0), 0);
+      const cooldownMs = 5 * 60 * 1000;
+      const numberKey = `lucky-number-${dayKey}`;
+      const seedKey = `lucky-number-seed-${dayKey}`;
+      const cooldownKey = `lucky-number-next-draw-${dayKey}`;
+      const initialSeed = [...dayKey].reduce((total, character) => total + character.charCodeAt(0), 0);
+      let seed = Number(localStorage.getItem(seedKey)) || initialSeed;
       const numberElement = document.querySelector('#lucky-number');
       const drawButton = document.querySelector('#draw-button');
+      const hamsterMessage = document.querySelector('#hamster-message');
 
-      function drawNumber() {
-        seed = (seed * 9301 + 49297) % 233280;
-        numberElement.textContent = String(Math.floor((seed / 233280) * 99) + 1);
+      function formatRemainingTime(milliseconds) {
+        const totalSeconds = Math.ceil(milliseconds / 1000);
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+        return minutes > 0 ? `${minutes}분 ${seconds}초` : `${seconds}초`;
       }
 
-      drawNumber();
-      drawButton.addEventListener('click', drawNumber);
+      function showHamsterMessage(message) {
+        hamsterMessage.textContent = message;
+        hamsterMessage.hidden = false;
+      }
+
+      function drawNumber(startCooldown = true) {
+        seed = (seed * 9301 + 49297) % 233280;
+        numberElement.textContent = String(Math.floor((seed / 233280) * 99) + 1);
+        localStorage.setItem(seedKey, String(seed));
+        localStorage.setItem(numberKey, numberElement.textContent);
+
+        if (startCooldown) {
+          localStorage.setItem(cooldownKey, String(Date.now() + cooldownMs));
+          showHamsterMessage('새 행운 숫자를 골랐어! 5분 뒤에 또 만나요.');
+        }
+      }
+
+      const savedNumber = localStorage.getItem(numberKey);
+      if (savedNumber) numberElement.textContent = savedNumber;
+      else drawNumber(false);
+
+      drawButton.addEventListener('click', () => {
+        const nextDrawAt = Number(localStorage.getItem(cooldownKey)) || 0;
+        const remainingTime = nextDrawAt - Date.now();
+
+        if (remainingTime > 0) {
+          showHamsterMessage(`아직 기다려야 해! ${formatRemainingTime(remainingTime)} 뒤에 다시 뽑을 수 있어.`);
+          return;
+        }
+
+        drawNumber();
+      });
     </script>
   </body>
 </html>
