@@ -119,6 +119,17 @@
       :root[data-theme='dark'] .hint,
       :root[data-theme='dark'] .theme-hint { color: #fff; }
 
+      .favorite-form { max-width: 500px; margin-top: 28px; padding: 18px; border: 1px solid var(--card-border); border-radius: 18px; background: var(--card); box-shadow: 0 10px 24px var(--card-shadow); }
+      .favorite-form h2 { margin: 0 0 5px; font-family: 'Jua', sans-serif; font-size: 21px; font-weight: 400; }
+      .favorite-form p { margin: 0 0 14px; color: var(--muted); font-size: 13px; }
+      .favorite-fields { display: flex; gap: 10px; }
+      .favorite-fields input { min-width: 0; flex: 1; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; color: var(--ink); background: transparent; font: inherit; font-size: 16px; }
+      .favorite-fields input:focus { outline: 3px solid var(--glow); border-color: var(--gold); }
+      .favorite-fields button { flex: none; padding: 12px 18px; }
+      .form-status { min-height: 1.3em; margin: 10px 2px 0; color: var(--muted); font-size: 13px; }
+      .form-status.is-success { color: #237a4a; }
+      .form-status.is-error { color: #b94131; }
+
       footer { display: flex; justify-content: space-between; border-top: 1px solid var(--line); padding-top: 18px; color: var(--muted); font-size: 12px; }
 
       @media (max-width: 700px) {
@@ -141,6 +152,16 @@
             <button id="draw-button" type="button">다시 뽑기</button>
             <span class="hint">5분마다 한 번 뽑을 수 있어요</span>
           </div>
+          <form class="favorite-form" id="favorite-form" action="https://formspree.io/f/xjybqpoo" method="POST">
+            <h2>좋아하는 숫자를 알려주세요</h2>
+            <p>햄스터에게 살짝 귀띔해 주세요.</p>
+            <input type="hidden" name="_subject" value="새로운 좋아하는 숫자" />
+            <div class="favorite-fields">
+              <input id="favorite-number" name="favorite_number" type="number" inputmode="numeric" step="1" required placeholder="예: 7" aria-describedby="form-status" />
+              <button type="submit">보내기</button>
+            </div>
+            <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
+          </form>
         </div>
 
         <div class="number-wrap" id="number-wrap">
@@ -256,6 +277,35 @@
         }
 
         drawNumber();
+      });
+
+      const favoriteForm = document.querySelector('#favorite-form');
+      const formStatus = document.querySelector('#form-status');
+      const formSubmitButton = favoriteForm.querySelector('button[type="submit"]');
+
+      favoriteForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        formStatus.className = 'form-status';
+        formStatus.textContent = '보내는 중…';
+        formSubmitButton.disabled = true;
+
+        try {
+          const response = await fetch(favoriteForm.action, {
+            method: 'POST',
+            body: new FormData(favoriteForm),
+            headers: { Accept: 'application/json' },
+          });
+
+          if (!response.ok) throw new Error('submission failed');
+          favoriteForm.reset();
+          formStatus.classList.add('is-success');
+          formStatus.textContent = '고마워요! 좋아하는 숫자를 받았어요.';
+        } catch (error) {
+          formStatus.classList.add('is-error');
+          formStatus.textContent = '전송하지 못했어요. 잠시 후 다시 시도해 주세요.';
+        } finally {
+          formSubmitButton.disabled = false;
+        }
       });
     </script>
   </body>
