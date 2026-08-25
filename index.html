@@ -69,19 +69,6 @@
       .brand-mark { color: var(--coral); font-size: 25px; }
       .date { color: var(--muted); font-size: 13px; }
       .header-tools { display: flex; align-items: center; gap: 14px; }
-      .theme-toggle {
-        display: grid;
-        width: 38px;
-        height: 38px;
-        place-items: center;
-        padding: 0;
-        border: 1px solid var(--line);
-        color: var(--ink);
-        background: var(--card);
-        font-size: 17px;
-        line-height: 1;
-      }
-      .theme-toggle:hover { color: var(--card); background: var(--coral); }
 
       .hero {
         display: grid;
@@ -94,7 +81,7 @@
       h1 { max-width: 500px; margin: 0; font-family: 'Jua', sans-serif; font-size: clamp(42px, 6vw, 76px); font-weight: 400; line-height: 1.13; letter-spacing: -0.025em; }
       .intro { max-width: 360px; margin: 24px 0 0; color: var(--muted); font-size: 16px; line-height: 1.8; }
 
-      .number-wrap { position: relative; display: grid; place-items: center; }
+      .number-wrap { position: relative; display: grid; place-items: center; padding-bottom: 34px; }
       .number-card {
         position: relative;
         width: min(100%, 430px);
@@ -105,13 +92,28 @@
         filter: drop-shadow(0 20px 25px var(--card-depth));
       }
       .hamster { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
-      .hamster-dark { display: none; }
+      .hamster-dark, .hamster-back { display: none; }
       :root[data-theme='dark'] .hamster-light { display: none; }
       :root[data-theme='dark'] .hamster-dark { display: block; }
+      .number-wrap.is-waiting .hamster-light,
+      .number-wrap.is-waiting .hamster-dark { display: none; }
+      .number-wrap.is-waiting .hamster-back-light { display: block; }
+      :root[data-theme='dark'] .number-wrap.is-waiting .hamster-back-light { display: none; }
+      :root[data-theme='dark'] .number-wrap.is-waiting .hamster-back-dark { display: block; }
+      .number-wrap.is-waiting .number { display: none; }
       .number { position: absolute; z-index: 1; top: 65%; color: var(--coral); font-family: 'Jua', sans-serif; font-size: clamp(72px, 10vw, 112px); font-weight: 400; line-height: 1; letter-spacing: -0.04em; text-shadow: 0 2px 0 rgba(255, 255, 255, 0.3); transform: translateY(-50%); }
       :root[data-theme='dark'] .number { color: var(--gold); text-shadow: 0 2px 0 rgba(0, 0, 0, 0.45), 0 0 16px rgba(243, 200, 92, 0.3); }
       .hamster-message { position: absolute; z-index: 3; top: -24px; left: 50%; width: min(82%, 280px); margin: 0; padding: 10px 14px; border: 1px solid #d7d7d7; border-radius: 16px; color: #171717; background: #fff; box-shadow: 0 8px 18px rgba(0, 0, 0, 0.16); font-size: 13px; font-weight: 700; line-height: 1.45; text-align: center; white-space: pre-line; transform: translateX(-50%); }
       .hamster-message::after { content: ''; position: absolute; bottom: -7px; left: 50%; width: 12px; height: 12px; border-right: 1px solid #d7d7d7; border-bottom: 1px solid #d7d7d7; background: #fff; transform: translateX(-50%) rotate(45deg); }
+      .character-toggle { position: absolute; z-index: 2; width: 46px; height: 38px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: transparent; }
+      .character-toggle:hover { background: transparent; transform: none; }
+      .nose-toggle { top: 33%; left: calc(50% - 23px); }
+      .tail-toggle { top: 78%; left: calc(50% - 23px); display: none; }
+      :root[data-theme='dark'] .nose-toggle { top: 29%; }
+      :root[data-theme='dark'] .tail-toggle { top: 79%; }
+      .number-wrap.is-waiting .nose-toggle { display: none; }
+      .number-wrap.is-waiting .tail-toggle { display: block; }
+      .theme-hint { position: absolute; right: 0; bottom: 0; left: 0; margin: 0; color: var(--muted); font-size: 11px; line-height: 1.4; text-align: center; }
 
       .actions { display: flex; align-items: center; gap: 16px; margin-top: 34px; }
       button { border: 0; border-radius: 999px; padding: 14px 21px; color: #fffdf8; background: var(--ink); font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; transition: transform 180ms ease, background 180ms ease; }
@@ -141,7 +143,6 @@
       <header>
         <div class="header-tools">
           <time class="date" id="today"></time>
-          <button class="theme-toggle" id="theme-toggle" type="button" aria-label="다크 모드로 전환" title="다크 모드로 전환"><span aria-hidden="true">◐</span></button>
         </div>
       </header>
 
@@ -155,13 +156,18 @@
           </div>
         </div>
 
-        <div class="number-wrap">
+        <div class="number-wrap" id="number-wrap">
           <div class="number-card" aria-live="polite">
             <img class="hamster hamster-light" src="assets/hamster-light.png" alt="행운 숫자 팻말을 든 귀여운 햄스터" />
             <img class="hamster hamster-dark" src="assets/hamster-dark.png" alt="행운 숫자 팻말을 든 무서운 햄스터" />
+            <img class="hamster hamster-back hamster-back-light" src="assets/hamster-back-light.png" alt="뒤돌아선 귀여운 햄스터와 꼬리" />
+            <img class="hamster hamster-back hamster-back-dark" src="assets/hamster-back-dark.png" alt="뒤돌아선 망토 햄스터와 꼬리" />
             <span class="number" id="lucky-number">7</span>
+            <button class="character-toggle nose-toggle" id="nose-toggle" type="button" aria-label="다크 모드로 전환" title="다크 모드로 전환"></button>
+            <button class="character-toggle tail-toggle" id="tail-toggle" type="button" aria-label="다크 모드로 전환" title="다크 모드로 전환"></button>
           </div>
           <p class="hamster-message" id="hamster-message" role="status" hidden></p>
+          <p class="theme-hint" id="theme-hint">다크모드로 전환하려면 햄스터 코를 눌러주세요</p>
         </div>
       </section>
 
@@ -169,24 +175,33 @@
     </main>
 
     <script>
-      const themeToggle = document.querySelector('#theme-toggle');
+      const noseToggle = document.querySelector('#nose-toggle');
+      const tailToggle = document.querySelector('#tail-toggle');
+      const themeHint = document.querySelector('#theme-hint');
+      const numberWrap = document.querySelector('#number-wrap');
       const savedTheme = localStorage.getItem('theme');
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
 
       function applyTheme(theme, persist = false) {
         document.documentElement.dataset.theme = theme;
         const isDark = theme === 'dark';
-        themeToggle.setAttribute('aria-label', isDark ? '화이트 모드로 전환' : '다크 모드로 전환');
-        themeToggle.setAttribute('title', isDark ? '화이트 모드로 전환' : '다크 모드로 전환');
-        themeToggle.querySelector('span').textContent = isDark ? '☀' : '◐';
+        const nextThemeLabel = isDark ? '화이트 모드로 전환' : '다크 모드로 전환';
+        noseToggle.setAttribute('aria-label', nextThemeLabel);
+        noseToggle.setAttribute('title', nextThemeLabel);
+        tailToggle.setAttribute('aria-label', nextThemeLabel);
+        tailToggle.setAttribute('title', nextThemeLabel);
+        updateThemeHint();
         document.querySelector('meta[name="theme-color"]').setAttribute('content', isDark ? '#142b2a' : '#f5efe2');
         if (persist) localStorage.setItem('theme', theme);
       }
 
       applyTheme(savedTheme || (prefersDark.matches ? 'dark' : 'light'));
-      themeToggle.addEventListener('click', () => {
+      function toggleTheme() {
         applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark', true);
-      });
+      }
+
+      noseToggle.addEventListener('click', toggleTheme);
+      tailToggle.addEventListener('click', toggleTheme);
 
       const today = new Date();
       const dateFormatter = new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' });
@@ -202,6 +217,11 @@
       const numberElement = document.querySelector('#lucky-number');
       const drawButton = document.querySelector('#draw-button');
       const hamsterMessage = document.querySelector('#hamster-message');
+      function updateThemeHint() {
+        const nextTheme = document.documentElement.dataset.theme === 'dark' ? '화이트모드' : '다크모드';
+        const characterPart = numberWrap?.classList.contains('is-waiting') ? '꼬리' : '코';
+        themeHint.textContent = `${nextTheme}로 전환하려면 햄스터 ${characterPart}를 눌러주세요`;
+      }
 
       function formatRemainingTime(milliseconds) {
         const totalSeconds = Math.ceil(milliseconds / 1000);
@@ -223,6 +243,8 @@
 
         if (startCooldown) {
           localStorage.setItem(cooldownKey, String(Date.now() + cooldownMs));
+          numberWrap.classList.remove('is-waiting');
+          updateThemeHint();
           showHamsterMessage('새 행운 숫자를 골랐어! 5분 뒤에 또 만나요.');
         }
       }
@@ -236,6 +258,8 @@
         const remainingTime = nextDrawAt - Date.now();
 
         if (remainingTime > 0) {
+          numberWrap.classList.add('is-waiting');
+          updateThemeHint();
           showHamsterMessage(`아직 기다려야 해!\n${formatRemainingTime(remainingTime)} 뒤에 다시 뽑을 수 있어.`);
           return;
         }
