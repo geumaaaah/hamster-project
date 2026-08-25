@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#f5efe2" />
     <title>햄스터가 알려주는 오늘의 행운 숫자</title>
     <style>
-      @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Gowun+Batang:wght@400;700&display=swap');
+      @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Jua&display=swap');
 
       :root {
         --ink: #173f3a;
@@ -63,7 +63,7 @@
         padding: 32px 0 28px;
       }
 
-      header { display: flex; justify-content: space-between; align-items: center; }
+      header { display: flex; justify-content: flex-end; align-items: center; }
 
       .brand { display: flex; gap: 11px; align-items: center; font-weight: 700; letter-spacing: 0.02em; }
       .brand-mark { color: var(--coral); font-size: 25px; }
@@ -92,7 +92,7 @@
       }
 
       .eyebrow { margin: 0 0 18px; color: var(--coral); font-size: 12px; font-weight: 700; letter-spacing: 0.17em; }
-      h1 { max-width: 500px; margin: 0; font-family: 'Gowun Batang', serif; font-size: clamp(42px, 6vw, 76px); line-height: 1.13; letter-spacing: -0.04em; }
+      h1 { max-width: 500px; margin: 0; font-family: 'Jua', sans-serif; font-size: clamp(42px, 6vw, 76px); font-weight: 400; line-height: 1.13; letter-spacing: -0.025em; }
       .intro { max-width: 360px; margin: 24px 0 0; color: var(--muted); font-size: 16px; line-height: 1.8; }
 
       .number-wrap { position: relative; display: grid; place-items: center; }
@@ -112,13 +112,14 @@
       .number { position: absolute; z-index: 1; top: 65%; color: var(--coral); font-size: clamp(96px, 15vw, 156px); font-weight: 700; line-height: 1; letter-spacing: -0.08em; text-shadow: 0 2px 0 rgba(255, 255, 255, 0.3); transform: translateY(-50%); }
       :root[data-theme='dark'] .number { color: var(--gold); text-shadow: 0 2px 0 rgba(0, 0, 0, 0.45), 0 0 16px rgba(243, 200, 92, 0.3); }
       .number-label { position: absolute; z-index: 2; top: 81%; color: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: 0.12em; transform: translateY(-50%); }
-      .hamster-message { position: absolute; z-index: 3; top: 2%; left: 50%; width: min(82%, 280px); margin: 0; padding: 10px 14px; border: 1px solid var(--line); border-radius: 16px; color: var(--ink); background: var(--card); box-shadow: 0 8px 18px var(--card-depth); font-size: 13px; font-weight: 700; line-height: 1.45; text-align: center; transform: translateX(-50%); }
-      .hamster-message::after { content: ''; position: absolute; bottom: -7px; left: 50%; width: 12px; height: 12px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--card); transform: translateX(-50%) rotate(45deg); }
+      .hamster-message { position: absolute; z-index: 3; top: -24px; left: 50%; width: min(82%, 280px); margin: 0; padding: 10px 14px; border: 1px solid #d7d7d7; border-radius: 16px; color: #171717; background: #fff; box-shadow: 0 8px 18px rgba(0, 0, 0, 0.16); font-size: 13px; font-weight: 700; line-height: 1.45; text-align: center; white-space: pre-line; transform: translateX(-50%); }
+      .hamster-message::after { content: ''; position: absolute; bottom: -7px; left: 50%; width: 12px; height: 12px; border-right: 1px solid #d7d7d7; border-bottom: 1px solid #d7d7d7; background: #fff; transform: translateX(-50%) rotate(45deg); }
 
       .actions { display: flex; align-items: center; gap: 16px; margin-top: 34px; }
       button { border: 0; border-radius: 999px; padding: 14px 21px; color: #fffdf8; background: var(--ink); font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; transition: transform 180ms ease, background 180ms ease; }
       button:hover { background: var(--coral); transform: translateY(-2px); }
       button:focus-visible { outline: 3px solid var(--gold); outline-offset: 4px; }
+      :root[data-theme='dark'] .actions button { color: #171717; }
       .hint { color: var(--muted); font-size: 12px; }
 
       footer { display: flex; justify-content: space-between; border-top: 1px solid var(--line); padding-top: 18px; color: var(--muted); font-size: 12px; }
@@ -140,7 +141,6 @@
   <body>
     <main>
       <header>
-        <div class="brand"><span class="brand-mark" aria-hidden="true">✦</span><span>LUCKY NOTE</span></div>
         <div class="header-tools">
           <time class="date" id="today"></time>
           <button class="theme-toggle" id="theme-toggle" type="button" aria-label="다크 모드로 전환" title="다크 모드로 전환"><span aria-hidden="true">◐</span></button>
@@ -164,8 +164,8 @@
             <img class="hamster hamster-dark" src="assets/hamster-dark.png" alt="행운 숫자 팻말을 든 무서운 햄스터" />
             <span class="number" id="lucky-number">7</span>
             <span class="number-label">YOUR LUCKY NUMBER</span>
-            <p class="hamster-message" id="hamster-message" role="status" hidden></p>
           </div>
+          <p class="hamster-message" id="hamster-message" role="status" hidden></p>
         </div>
       </section>
 
@@ -240,7 +240,7 @@
         const remainingTime = nextDrawAt - Date.now();
 
         if (remainingTime > 0) {
-          showHamsterMessage(`아직 기다려야 해! ${formatRemainingTime(remainingTime)} 뒤에 다시 뽑을 수 있어.`);
+          showHamsterMessage(`아직 기다려야 해!\n${formatRemainingTime(remainingTime)} 뒤에 다시 뽑을 수 있어.`);
           return;
         }
 
