@@ -16,6 +16,30 @@
         --coral: #e66e50;
         --gold: #e9b949;
         --line: rgba(23, 63, 58, 0.13);
+        --glow: rgba(233, 185, 73, 0.22);
+        --wash: #f8e8d8;
+        --leaf: #dcebe1;
+        --card-border: rgba(23, 63, 58, 0.08);
+        --card-shadow: rgba(23, 63, 58, 0.08);
+        --card-depth: rgba(98, 73, 41, 0.11);
+        color-scheme: light;
+      }
+
+      :root[data-theme='dark'] {
+        --ink: #f5eee1;
+        --muted: #b6bdb5;
+        --paper: #142b2a;
+        --card: #1d3936;
+        --coral: #ff9274;
+        --gold: #f3c85c;
+        --line: rgba(245, 238, 225, 0.16);
+        --glow: rgba(243, 200, 92, 0.13);
+        --wash: #243e39;
+        --leaf: #183b39;
+        --card-border: rgba(245, 238, 225, 0.12);
+        --card-shadow: rgba(0, 0, 0, 0.2);
+        --card-depth: rgba(0, 0, 0, 0.3);
+        color-scheme: dark;
       }
 
       * { box-sizing: border-box; }
@@ -25,8 +49,8 @@
         min-height: 100vh;
         color: var(--ink);
         background:
-          radial-gradient(circle at 85% 14%, rgba(233, 185, 73, 0.22) 0 8rem, transparent 8.1rem),
-          linear-gradient(135deg, #f5efe2 0%, #f8e8d8 54%, #dcebe1 100%);
+          radial-gradient(circle at 85% 14%, var(--glow) 0 8rem, transparent 8.1rem),
+          linear-gradient(135deg, var(--paper) 0%, var(--wash) 54%, var(--leaf) 100%);
         font-family: 'DM Sans', sans-serif;
       }
 
@@ -44,6 +68,20 @@
       .brand { display: flex; gap: 11px; align-items: center; font-weight: 700; letter-spacing: 0.02em; }
       .brand-mark { color: var(--coral); font-size: 25px; }
       .date { color: var(--muted); font-size: 13px; }
+      .header-tools { display: flex; align-items: center; gap: 14px; }
+      .theme-toggle {
+        display: grid;
+        width: 38px;
+        height: 38px;
+        place-items: center;
+        padding: 0;
+        border: 1px solid var(--line);
+        color: var(--ink);
+        background: var(--card);
+        font-size: 17px;
+        line-height: 1;
+      }
+      .theme-toggle:hover { color: var(--card); background: var(--coral); }
 
       .hero {
         display: grid;
@@ -65,10 +103,10 @@
         display: grid;
         place-items: center;
         overflow: hidden;
-        border: 1px solid rgba(23, 63, 58, 0.08);
+        border: 1px solid var(--card-border);
         border-radius: 8px;
         background: var(--card);
-        box-shadow: 18px 22px 0 rgba(23, 63, 58, 0.08), 0 20px 50px rgba(98, 73, 41, 0.11);
+        box-shadow: 18px 22px 0 var(--card-shadow), 0 20px 50px var(--card-depth);
       }
       .number-card::before { content: ''; position: absolute; width: 65%; aspect-ratio: 1; border: 1px solid rgba(230, 110, 80, 0.25); border-radius: 50%; }
       .number-card::after { content: ''; position: absolute; width: 45%; aspect-ratio: 1; border: 1px dashed rgba(233, 185, 73, 0.58); border-radius: 50%; transform: rotate(25deg); }
@@ -86,11 +124,12 @@
       @media (max-width: 700px) {
         main { width: min(100% - 32px, 500px); padding-top: 24px; }
         header { align-items: flex-start; }
+        .header-tools { gap: 10px; }
         .date { max-width: 120px; text-align: right; line-height: 1.5; }
         .hero { grid-template-columns: 1fr; gap: 44px; padding: 64px 0 56px; }
         h1 { font-size: clamp(42px, 14vw, 66px); }
         .intro { margin-top: 18px; font-size: 15px; }
-        .number-card { width: min(100%, 350px); box-shadow: 10px 13px 0 rgba(23, 63, 58, 0.08), 0 16px 35px rgba(98, 73, 41, 0.1); }
+        .number-card { width: min(100%, 350px); box-shadow: 10px 13px 0 var(--card-shadow), 0 16px 35px var(--card-depth); }
         .actions { flex-wrap: wrap; }
         footer { gap: 16px; line-height: 1.5; }
       }
@@ -100,7 +139,10 @@
     <main>
       <header>
         <div class="brand"><span class="brand-mark" aria-hidden="true">✦</span><span>LUCKY NOTE</span></div>
-        <time class="date" id="today"></time>
+        <div class="header-tools">
+          <time class="date" id="today"></time>
+          <button class="theme-toggle" id="theme-toggle" type="button" aria-label="다크 모드로 전환" title="다크 모드로 전환"><span aria-hidden="true">◐</span></button>
+        </div>
       </header>
 
       <section class="hero" aria-labelledby="page-title">
@@ -126,6 +168,25 @@
     </main>
 
     <script>
+      const themeToggle = document.querySelector('#theme-toggle');
+      const savedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+
+      function applyTheme(theme, persist = false) {
+        document.documentElement.dataset.theme = theme;
+        const isDark = theme === 'dark';
+        themeToggle.setAttribute('aria-label', isDark ? '화이트 모드로 전환' : '다크 모드로 전환');
+        themeToggle.setAttribute('title', isDark ? '화이트 모드로 전환' : '다크 모드로 전환');
+        themeToggle.querySelector('span').textContent = isDark ? '☀' : '◐';
+        document.querySelector('meta[name="theme-color"]').setAttribute('content', isDark ? '#142b2a' : '#f5efe2');
+        if (persist) localStorage.setItem('theme', theme);
+      }
+
+      applyTheme(savedTheme || (prefersDark.matches ? 'dark' : 'light'));
+      themeToggle.addEventListener('click', () => {
+        applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark', true);
+      });
+
       const today = new Date();
       const dateFormatter = new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' });
       document.querySelector('#today').textContent = dateFormatter.format(today);
