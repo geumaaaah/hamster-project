@@ -91,7 +91,6 @@
         padding: 56px 0 70px;
       }
 
-      .eyebrow { margin: 0 0 18px; color: var(--coral); font-size: 12px; font-weight: 700; letter-spacing: 0.17em; }
       h1 { max-width: 500px; margin: 0; font-family: 'Jua', sans-serif; font-size: clamp(42px, 6vw, 76px); font-weight: 400; line-height: 1.13; letter-spacing: -0.025em; }
       .intro { max-width: 360px; margin: 24px 0 0; color: var(--muted); font-size: 16px; line-height: 1.8; }
 
@@ -109,9 +108,8 @@
       .hamster-dark { display: none; }
       :root[data-theme='dark'] .hamster-light { display: none; }
       :root[data-theme='dark'] .hamster-dark { display: block; }
-      .number { position: absolute; z-index: 1; top: 65%; color: var(--coral); font-size: clamp(96px, 15vw, 156px); font-weight: 700; line-height: 1; letter-spacing: -0.08em; text-shadow: 0 2px 0 rgba(255, 255, 255, 0.3); transform: translateY(-50%); }
+      .number { position: absolute; z-index: 1; top: 65%; color: var(--coral); font-size: clamp(72px, 10vw, 112px); font-weight: 700; line-height: 1; letter-spacing: -0.08em; text-shadow: 0 2px 0 rgba(255, 255, 255, 0.3); transform: translateY(-50%); }
       :root[data-theme='dark'] .number { color: var(--gold); text-shadow: 0 2px 0 rgba(0, 0, 0, 0.45), 0 0 16px rgba(243, 200, 92, 0.3); }
-      .number-label { position: absolute; z-index: 2; top: 81%; color: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: 0.12em; transform: translateY(-50%); }
       .hamster-message { position: absolute; z-index: 3; top: -24px; left: 50%; width: min(82%, 280px); margin: 0; padding: 10px 14px; border: 1px solid #d7d7d7; border-radius: 16px; color: #171717; background: #fff; box-shadow: 0 8px 18px rgba(0, 0, 0, 0.16); font-size: 13px; font-weight: 700; line-height: 1.45; text-align: center; white-space: pre-line; transform: translateX(-50%); }
       .hamster-message::after { content: ''; position: absolute; bottom: -7px; left: 50%; width: 12px; height: 12px; border-right: 1px solid #d7d7d7; border-bottom: 1px solid #d7d7d7; background: #fff; transform: translateX(-50%) rotate(45deg); }
 
@@ -149,7 +147,6 @@
 
       <section class="hero" aria-labelledby="page-title">
         <div>
-          <p class="eyebrow">A LITTLE SIGN FOR TODAY</p>
           <h1 id="page-title">오늘,<br />당신의 숫자</h1>
           <p class="intro">햄스터가 오늘의 행운 숫자를 들고 왔어요. 작은 행운은 생각보다 가까이 있습니다.</p>
           <div class="actions">
@@ -163,7 +160,6 @@
             <img class="hamster hamster-light" src="assets/hamster-light.png" alt="행운 숫자 팻말을 든 귀여운 햄스터" />
             <img class="hamster hamster-dark" src="assets/hamster-dark.png" alt="행운 숫자 팻말을 든 무서운 햄스터" />
             <span class="number" id="lucky-number">7</span>
-            <span class="number-label">YOUR LUCKY NUMBER</span>
           </div>
           <p class="hamster-message" id="hamster-message" role="status" hidden></p>
         </div>
