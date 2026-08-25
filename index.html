@@ -48,9 +48,7 @@
         margin: 0;
         min-height: 100vh;
         color: var(--ink);
-        background:
-          radial-gradient(circle at 85% 14%, var(--glow) 0 8rem, transparent 8.1rem),
-          linear-gradient(135deg, var(--paper) 0%, var(--wash) 54%, var(--leaf) 100%);
+        background: linear-gradient(135deg, var(--paper) 0%, var(--wash) 54%, var(--leaf) 100%);
         font-family: 'DM Sans', sans-serif;
       }
 
@@ -59,16 +57,9 @@
         min-height: 100vh;
         margin: 0 auto;
         display: grid;
-        grid-template-rows: auto 1fr auto;
+        grid-template-rows: 1fr auto;
         padding: 32px 0 28px;
       }
-
-      header { display: flex; justify-content: flex-end; align-items: center; }
-
-      .brand { display: flex; gap: 11px; align-items: center; font-weight: 700; letter-spacing: 0.02em; }
-      .brand-mark { color: var(--coral); font-size: 25px; }
-      .date { color: var(--muted); font-size: 13px; }
-      .header-tools { display: flex; align-items: center; gap: 14px; }
 
       .hero {
         display: grid;
@@ -80,6 +71,10 @@
 
       h1 { max-width: 500px; margin: 0; color: #171717; font-family: 'Jua', sans-serif; font-size: clamp(30px, 3.4vw, 44px); font-weight: 400; line-height: 1.2; letter-spacing: -0.025em; white-space: nowrap; }
       :root[data-theme='dark'] h1 { color: #fff; }
+      .calendar-date { display: inline-grid; min-width: 104px; margin: 0 0 20px; overflow: hidden; border: 1px solid rgba(23, 23, 23, 0.18); border-radius: 8px; color: #171717; background: #fff; box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1); font-family: 'DM Sans', sans-serif; line-height: 1; text-align: center; }
+      .calendar-date::before { content: 'TODAY'; padding: 6px 10px 5px; color: #fff; background: #171717; font-size: 9px; font-weight: 700; letter-spacing: 0.12em; }
+      .calendar-month { padding: 8px 12px 1px; color: #6c7b73; font-size: 11px; font-weight: 700; }
+      .calendar-day { padding: 0 12px 9px; font-size: 18px; }
 
       .number-wrap { position: relative; display: grid; place-items: center; padding-bottom: 34px; }
       .number-card {
@@ -128,9 +123,6 @@
 
       @media (max-width: 700px) {
         main { width: min(100% - 32px, 500px); padding-top: 24px; }
-        header { align-items: flex-start; }
-        .header-tools { gap: 10px; }
-        .date { max-width: 120px; text-align: right; line-height: 1.5; }
         .hero { grid-template-columns: 1fr; gap: 44px; padding: 64px 0 56px; }
         h1 { font-size: clamp(30px, 8vw, 40px); }
         .number-card { width: min(100%, 350px); }
@@ -141,14 +133,9 @@
   </head>
   <body>
     <main>
-      <header>
-        <div class="header-tools">
-          <time class="date" id="today"></time>
-        </div>
-      </header>
-
       <section class="hero" aria-labelledby="page-title">
         <div>
+          <time class="calendar-date" id="today"><span class="calendar-month" id="today-month"></span><strong class="calendar-day" id="today-day"></strong></time>
           <h1 id="page-title">햄스터가 오늘의<br />행운 숫자를 들고왔어요!</h1>
           <div class="actions">
             <button id="draw-button" type="button">다시 뽑기</button>
@@ -204,8 +191,12 @@
       tailToggle.addEventListener('click', toggleTheme);
 
       const today = new Date();
-      const dateFormatter = new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' });
-      document.querySelector('#today').textContent = dateFormatter.format(today);
+      const calendarDate = document.querySelector('#today');
+      const dateValue = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+      calendarDate.dateTime = dateValue;
+      calendarDate.setAttribute('aria-label', new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' }).format(today));
+      document.querySelector('#today-month').textContent = `${today.getFullYear()}년 ${today.getMonth() + 1}월`;
+      document.querySelector('#today-day').textContent = String(today.getDate());
 
       const dayKey = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
       const cooldownMs = 5 * 60 * 1000;
