@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#f5efe2" />
-    <title>오늘의 행운 숫자</title>
+    <title>햄스터가 알려주는 오늘의 행운 숫자</title>
     <style>
       @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Gowun+Batang:wght@400;700&display=swap');
 
@@ -103,15 +103,15 @@
         display: grid;
         place-items: center;
         overflow: hidden;
-        border: 1px solid var(--card-border);
-        border-radius: 8px;
-        background: var(--card);
-        box-shadow: 18px 22px 0 var(--card-shadow), 0 20px 50px var(--card-depth);
+        filter: drop-shadow(0 20px 25px var(--card-depth));
       }
-      .number-card::before { content: ''; position: absolute; width: 65%; aspect-ratio: 1; border: 1px solid rgba(230, 110, 80, 0.25); border-radius: 50%; }
-      .number-card::after { content: ''; position: absolute; width: 45%; aspect-ratio: 1; border: 1px dashed rgba(233, 185, 73, 0.58); border-radius: 50%; transform: rotate(25deg); }
-      .number { position: relative; z-index: 1; color: var(--coral); font-size: clamp(110px, 18vw, 190px); font-weight: 700; line-height: 1; letter-spacing: -0.08em; }
-      .number-label { position: absolute; z-index: 2; bottom: 26px; color: var(--muted); font-size: 12px; letter-spacing: 0.12em; }
+      .hamster { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+      .hamster-dark { display: none; }
+      :root[data-theme='dark'] .hamster-light { display: none; }
+      :root[data-theme='dark'] .hamster-dark { display: block; }
+      .number { position: absolute; z-index: 1; top: 65%; color: var(--coral); font-size: clamp(96px, 15vw, 156px); font-weight: 700; line-height: 1; letter-spacing: -0.08em; text-shadow: 0 2px 0 rgba(255, 255, 255, 0.3); transform: translateY(-50%); }
+      :root[data-theme='dark'] .number { color: var(--gold); text-shadow: 0 2px 0 rgba(0, 0, 0, 0.45), 0 0 16px rgba(243, 200, 92, 0.3); }
+      .number-label { position: absolute; z-index: 2; top: 81%; color: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: 0.12em; transform: translateY(-50%); }
 
       .actions { display: flex; align-items: center; gap: 16px; margin-top: 34px; }
       button { border: 0; border-radius: 999px; padding: 14px 21px; color: #fffdf8; background: var(--ink); font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; transition: transform 180ms ease, background 180ms ease; }
@@ -129,7 +129,7 @@
         .hero { grid-template-columns: 1fr; gap: 44px; padding: 64px 0 56px; }
         h1 { font-size: clamp(42px, 14vw, 66px); }
         .intro { margin-top: 18px; font-size: 15px; }
-        .number-card { width: min(100%, 350px); box-shadow: 10px 13px 0 var(--card-shadow), 0 16px 35px var(--card-depth); }
+        .number-card { width: min(100%, 350px); }
         .actions { flex-wrap: wrap; }
         footer { gap: 16px; line-height: 1.5; }
       }
@@ -149,7 +149,7 @@
         <div>
           <p class="eyebrow">A LITTLE SIGN FOR TODAY</p>
           <h1 id="page-title">오늘,<br />당신의 숫자</h1>
-          <p class="intro">잠깐 멈춰서 마음에 담아둘 숫자를 골라보세요. 작은 행운은 생각보다 가까이 있습니다.</p>
+          <p class="intro">햄스터가 오늘의 행운 숫자를 들고 왔어요. 작은 행운은 생각보다 가까이 있습니다.</p>
           <div class="actions">
             <button id="draw-button" type="button">다시 뽑기 <span aria-hidden="true">↗</span></button>
             <span class="hint">오늘 하루를 위한 숫자</span>
@@ -158,6 +158,8 @@
 
         <div class="number-wrap">
           <div class="number-card" aria-live="polite">
+            <img class="hamster hamster-light" src="assets/hamster-light.png" alt="행운 숫자 팻말을 든 귀여운 햄스터" />
+            <img class="hamster hamster-dark" src="assets/hamster-dark.png" alt="행운 숫자 팻말을 든 무서운 햄스터" />
             <span class="number" id="lucky-number">7</span>
             <span class="number-label">YOUR LUCKY NUMBER</span>
           </div>
